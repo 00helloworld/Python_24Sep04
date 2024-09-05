@@ -1,0 +1,18 @@
+{
+  "0_main_file.qmd": {
+    "0_main_file.embed.ipynb": "7a0921a9",
+    "0_main_file.out.ipynb": "8861881a",
+    "0_main_file-preview.html": "fd9fd7af",
+    "index.html": "05ad7522",
+    "0_main_file.tex": "70195dfb",
+    "0_main_file.docx": "33e12742"
+  },
+  "1_DataExplore.ipynb": {
+    "1_DataExplore.out.ipynb": "b7ec8f6a",
+    "1_DataExplore-preview.html": "304d5b6f"
+  },
+  "DataExplore.ipynb": {
+    "DataExplore.out.ipynb": "2d7cef1b",
+    "DataExplore-preview.html": "30557988"
+  }
+}

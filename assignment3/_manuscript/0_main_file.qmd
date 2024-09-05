@@ -1,0 +1,295 @@
+---
+title: Assignment3
+authors:
+  - name: Jiacheng Li
+    affiliation: The University of Auckland
+    roles: writing
+    corresponding: true
+bibliography: references.bib
+---
+
+
+
+# Introduction
+In modern election campaigns, data analysis plays a crucial role in understanding voter behavior and financial contributions. By examining voting patterns and donation distributions, we can gain insights into the support base of leading candidates. This report focuses on analyzing the voter information for the top three candidates based on the number of votes received: Barack Obama, Ron Paul, and Mitt Romney. The analysis primarily focuses on the distribution of voters and their spending patterns.
+
+
+# Top 3 Candidates
+## Summary
+In terms of both donation amount and donor count, Obama, Romney, and Paul rank among the top three candidates. Therefore, we focus our analysis on the voter information of these three candidates.
+
+## Donors
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+data = pd.read_csv('P00000001-ALL.csv')
+# 计算每个候选人的捐款数量
+votes_by_candidate = data.groupby('cand_nm')['contb_receipt_amt'].count()
+
+# 按照票数从大到小排序
+votes_by_candidate_sorted = votes_by_candidate.sort_values(ascending=False)
+
+# 绘制饼图，显示百分比和票数
+plt.figure(figsize=(8,8))
+plt.pie(votes_by_candidate_sorted, labels=votes_by_candidate_sorted.index, 
+        autopct=lambda p: '{:.1f}% ({:,.0f})'.format(p, p * sum(votes_by_candidate_sorted) / 100), 
+        startangle=90, counterclock=False)
+plt.title('Vote Percentage and Counts by Candidate')
+plt.tight_layout()
+
+# 展示饼图
+plt.show()
+
+```
+
+## Contributions
+```{python}
+# 计算每个候选人的捐款总额
+donations_by_candidate = data.groupby('cand_nm')['contb_receipt_amt'].sum()
+
+# 按照捐款总额从大到小排序
+donations_by_candidate_sorted = donations_by_candidate.sort_values(ascending=False)
+
+# 绘制饼图
+plt.figure(figsize=(8,8))
+plt.pie(donations_by_candidate_sorted, labels=donations_by_candidate_sorted.index, 
+        autopct='%1.1f%%', startangle=90, counterclock=False)
+plt.title('Donation Percentage by Candidate')
+plt.tight_layout()
+
+# 展示饼图
+plt.show()
+```
+
+# Statewise Total Donations for Barack Obama, Ron Paul, and Mitt Romney
+
+## Summary
+Overall, Obama leads in donations across both large and small states, reflecting his broader nationwide support. Romney, on the other hand, relies on donations from a few key states, indicating a more concentrated and elite-based fundraising structure. Paul's grassroots supporters, though widespread, contribute smaller amounts overall.
+
+## Barack Obama
+```{python}
+
+# 计算每个州的捐款总额 Obama, Barack
+donations_by_state = data[data['cand_nm']=='Obama, Barack'].groupby('contbr_st')['contb_receipt_amt'].sum()
+
+# 绘制条形图，按总额排序
+donations_by_state_sorted = donations_by_state.sort_values(ascending=False)
+plt.figure(figsize=(12,6))
+donations_by_state_sorted.plot(kind='bar', color='lightgreen')
+plt.title('Obama, Barack Total Donations by State (Sorted)')
+plt.ylabel('Total Donation Amount')
+plt.xlabel('State')
+plt.xticks(rotation=90)
+plt.tight_layout()
+
+# 展示图表
+plt.show()
+
+```
+## Ron Paul
+```{python}
+# 计算每个州的捐款总额 Paul, Ron
+donations_by_state = data[data['cand_nm']=='Paul, Ron'].groupby('contbr_st')['contb_receipt_amt'].sum()
+
+# 绘制条形图，按总额排序
+donations_by_state_sorted = donations_by_state.sort_values(ascending=False)
+plt.figure(figsize=(12,6))
+donations_by_state_sorted.plot(kind='bar', color='lightcoral')
+plt.title('Paul, Ron Total Donations by State (Sorted)')
+plt.ylabel('Total Donation Amount')
+plt.xlabel('State')
+plt.xticks(rotation=90)
+plt.tight_layout()
+
+# 展示图表
+plt.show()
+
+```
+## Mitt Romney
+```{python}
+# 计算每个州的捐款总额 Romney, Mitt
+donations_by_state = data[data['cand_nm']=='Romney, Mitt'].groupby('contbr_st')['contb_receipt_amt'].sum()
+
+# 绘制条形图，按总额排序
+donations_by_state_sorted = donations_by_state.sort_values(ascending=False)
+plt.figure(figsize=(12,6))
+donations_by_state_sorted.plot(kind='bar', color='lightblue')
+plt.title('Romney, Mitt Total Donations by State (Sorted)')
+plt.ylabel('Total Donation Amount')
+plt.xlabel('State')
+plt.xticks(rotation=90)
+plt.tight_layout()
+
+# 展示图表
+plt.show()
+
+```
+
+# Average Donation Amount per State for Barack Obama, Ron Paul, and Mitt Romney
+
+## Summary
+Romney heavily relies on large donations from a few contributors, particularly excelling in certain key states. This fundraising strategy seems to depend on a more elite network of donors. On the other hand, Obama draws more from small donations by ordinary voters. Although his average donation is lower than Romney's, his broad nationwide support gives him a strong competitive advantage in fundraising. Paul's donor base is widespread but with limited funding, indicating that his supporters primarily contribute smaller amounts, which puts him at a disadvantage in overall fundraising efforts.
+
+## Barack Obama
+```{python}
+# 计算每个州的总捐款金额和捐款数量
+total_donations_by_state = data[data['cand_nm']=='Obama, Barack'].groupby('contbr_st')['contb_receipt_amt'].sum()
+donation_count_by_state = data[data['cand_nm']=='Obama, Barack'].groupby('contbr_st')['contb_receipt_amt'].count()
+
+# 计算每个州的人均捐款金额
+average_donation_by_state = total_donations_by_state / donation_count_by_state
+
+# 排除没有捐款或数据无效的州
+average_donation_by_state = average_donation_by_state[average_donation_by_state > 0]
+
+# 按照人均捐款金额从大到小排序
+average_donation_by_state_sorted = average_donation_by_state.sort_values(ascending=False)
+
+# 绘制条形图，按人均捐款金额排序
+plt.figure(figsize=(12,6))
+average_donation_by_state_sorted.plot(kind='bar', color='lightgreen')
+plt.title('Obama, Barack Average Donation per Donor by State (Sorted)')
+plt.ylabel('Average Donation Amount')
+plt.xlabel('State')
+plt.xticks(rotation=90)
+plt.tight_layout()
+
+# 展示图表
+plt.show()
+
+```
+## Ron Paul
+```{python}
+# 计算每个州的总捐款金额和捐款数量
+total_donations_by_state = data[data['cand_nm']=='Paul, Ron'].groupby('contbr_st')['contb_receipt_amt'].sum()
+donation_count_by_state = data[data['cand_nm']=='Paul, Ron'].groupby('contbr_st')['contb_receipt_amt'].count()
+
+# 计算每个州的人均捐款金额
+average_donation_by_state = total_donations_by_state / donation_count_by_state
+
+# 排除没有捐款或数据无效的州
+average_donation_by_state = average_donation_by_state[average_donation_by_state > 0]
+
+# 按照人均捐款金额从大到小排序
+average_donation_by_state_sorted = average_donation_by_state.sort_values(ascending=False)
+
+# 绘制条形图，按人均捐款金额排序
+plt.figure(figsize=(12,6))
+average_donation_by_state_sorted.plot(kind='bar', color='lightcoral')
+plt.title('Paul, Ron Average Donation per Donor by State (Sorted)')
+plt.ylabel('Average Donation Amount')
+plt.xlabel('State')
+plt.xticks(rotation=90)
+plt.tight_layout()
+
+# 展示图表
+plt.show()
+
+```
+## Mitt Romney
+```{python}
+# 计算每个州的总捐款金额和捐款数量
+total_donations_by_state = data[data['cand_nm']=='Romney, Mitt'].groupby('contbr_st')['contb_receipt_amt'].sum()
+donation_count_by_state = data[data['cand_nm']=='Romney, Mitt'].groupby('contbr_st')['contb_receipt_amt'].count()
+
+# 计算每个州的人均捐款金额
+average_donation_by_state = total_donations_by_state / donation_count_by_state
+
+# 排除没有捐款或数据无效的州
+average_donation_by_state = average_donation_by_state[average_donation_by_state > 0]
+
+# 按照人均捐款金额从大到小排序
+average_donation_by_state_sorted = average_donation_by_state.sort_values(ascending=False)
+
+# 绘制条形图，按人均捐款金额排序
+plt.figure(figsize=(12,6))
+average_donation_by_state_sorted.plot(kind='bar', color='lightblue')
+plt.title('Romney, Mitt Average Donation per Donor by State (Sorted)')
+plt.ylabel('Average Donation Amount')
+plt.xlabel('State')
+plt.xticks(rotation=90)
+plt.tight_layout()
+
+# 展示图表
+plt.show()
+
+```
+## Overall
+```{python}
+# 计算每个候选人的总捐款金额和捐款数量，只考虑 'Obama, Barack', 'Paul, Ron', 和 'Romney, Mitt'
+selected_candidates = ['Obama, Barack', 'Paul, Ron', 'Romney, Mitt']
+
+# 计算总捐款金额
+total_donations_by_candidate = data[data['cand_nm'].isin(selected_candidates)].groupby('cand_nm')['contb_receipt_amt'].sum()
+
+# 计算捐款次数（代表捐款人数）
+donation_count_by_candidate = data[data['cand_nm'].isin(selected_candidates)].groupby('cand_nm')['contb_receipt_amt'].count()
+
+# 计算人均捐款金额
+average_donation_by_candidate = total_donations_by_candidate / donation_count_by_candidate
+
+# 排除没有捐款的候选人
+average_donation_by_candidate = average_donation_by_candidate[average_donation_by_candidate > 0]
+
+# 按照人均捐款金额从大到小排序
+average_donation_by_candidate_sorted = average_donation_by_candidate.sort_values(ascending=False)
+
+# 绘制条形图，按人均捐款金额排序
+plt.figure(figsize=(8,6))
+average_donation_by_candidate_sorted.plot(kind='bar', color=['lightblue', 'lightgreen', 'lightcoral'])
+plt.title('Average Donation per Donor for Obama, Paul, and Romney')
+plt.ylabel('Average Donation Amount')
+plt.xlabel('Candidate')
+plt.xticks(rotation=0)
+plt.tight_layout()
+
+# 展示图表
+plt.show()
+
+```
+
+# Vote Share by State for Barack Obama, Ron Paul, and Mitt Romney
+
+## Summary
+Obama has a broader support base in most states, with the largest percentage of donors. Romney's support is concentrated in a few key states, where he demonstrates a strong regional advantage. Paul's supporters are more widely distributed, but their proportion is relatively low, indicating that while he has widespread grassroots support, his overall influence is not as strong as Obama's or Romney's.
+
+## Overall
+```{python}
+# 过滤出 'Obama, Barack', 'Paul, Ron', 和 'Romney, Mitt' 三位候选人的数据
+selected_candidates = ['Obama, Barack', 'Paul, Ron', 'Romney, Mitt']
+filtered_data = data[data['cand_nm'].isin(selected_candidates)]
+# 计算每个候选人在每个州的捐款人数
+donors_by_candidate_state = filtered_data.groupby(['contbr_st', 'cand_nm'])['contbr_nm'].nunique().unstack()
+
+# 用0填充空值，表示该州没有对应候选人的捐款人
+donors_by_candidate_state = donors_by_candidate_state.fillna(0)
+
+# 计算每个州的总捐款人数
+total_donors_by_state = donors_by_candidate_state.sum(axis=1)
+
+# 计算每个候选人在每个州贡献人数的百分比
+donor_percentage_by_candidate_state = donors_by_candidate_state.div(total_donors_by_state, axis=0) * 100
+
+# 绘制条形图
+donor_percentage_by_candidate_state.plot(kind='bar', figsize=(14,7), color=['lightgreen', 'lightcoral', 'blue'])
+plt.title('Percentage of Donors by State for Obama, Paul, and Romney')
+plt.ylabel('Percentage of Total Donors (%)')
+plt.xlabel('State')
+plt.xticks(rotation=90)
+plt.tight_layout()
+
+# 展示图表
+plt.show()
+
+```
+
+# Conclusion
+In this report, we analyzed the voter information for the top three candidates, Barack Obama, Ron Paul, and Mitt Romney, focusing on their statewise donations, average donation amounts, and vote shares. The data reveals clear differences in the support bases and fundraising strategies of each candidate.
+
+Obama's broad national appeal is evident from his widespread support across both large and small states, where he consistently led in both donor numbers and total contributions. His reliance on smaller individual donations underscores his broad, grassroots appeal, providing him with a competitive advantage across the country.
+
+Romney's fundraising efforts, while also significant, are more concentrated in key states, suggesting a reliance on high-net-worth donors. His ability to attract large donations in a few critical areas highlights his regional strengths, but this strategy may limit his broader appeal compared to Obama.
+
+Paul, though widely supported by grassroots donors, faces challenges in fundraising due to the relatively smaller contribution amounts. While his support is spread across many states, the overall financial backing he receives is less robust than that of his competitors, which may impact his ability to maintain competitiveness.
+
+In summary, the distribution of voter support and donation patterns clearly differentiates these three candidates, with Obama showing the broadest and most balanced support, Romney excelling in high-value contributions from key states, and Paul drawing more modest contributions from a wide, grassroots base.
